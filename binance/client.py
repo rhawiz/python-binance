@@ -12,6 +12,7 @@ from .exceptions import BinanceAPIException, BinanceRequestException, BinanceWit
 class Client(object):
 
     API_URL = 'https://api.binance.{}/api'
+    TEST_API_URL = 'https://testnet.binance.vision/api'
     WITHDRAW_API_URL = 'https://api.binance.{}/wapi'
     MARGIN_API_URL = 'https://api.binance.{}/sapi'
     WEBSITE_URL = 'https://www.binance.{}'
@@ -98,7 +99,7 @@ class Client(object):
     MINING_TO_USDT_FUTURE = "MINING_UMFUTURE"
     MINING_TO_FIAT = "MINING_C2C"
 
-    def __init__(self, api_key=None, api_secret=None, requests_params=None, tld='com'):
+    def __init__(self, api_key=None, api_secret=None, requests_params=None, testnet=True, tld='com'):
         """Binance API Client constructor
 
         :param api_key: Api Key
@@ -109,7 +110,7 @@ class Client(object):
         :type requests_params: dict.
 
         """
-
+        self.testnet = testnet
         self.API_URL = self.API_URL.format(tld)
         self.WITHDRAW_API_URL = self.WITHDRAW_API_URL.format(tld)
         self.MARGIN_API_URL = self.MARGIN_API_URL.format(tld)
@@ -136,7 +137,7 @@ class Client(object):
 
     def _create_api_uri(self, path, signed=True, version=PUBLIC_API_VERSION):
         v = self.PRIVATE_API_VERSION if signed else version
-        return self.API_URL + '/' + v + '/' + path
+        return self.API_URL if not self.testnet else self.TEST_API_URL + '/' + v + '/' + path
 
     def _create_withdraw_api_uri(self, path):
         return self.WITHDRAW_API_URL + '/' + self.WITHDRAW_API_VERSION + '/' + path
